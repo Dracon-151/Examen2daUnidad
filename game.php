@@ -4,7 +4,7 @@
         <title>Canvas</title>
     </head>
     <body>
-        <canvas width="1335" height="600" id="cvs">
+        <canvas width="1335" height="590" id="cvs">
           Hola tu navegador no funciona
         </canvas>
 
@@ -18,16 +18,21 @@
         var direccion = 1;
         var puntos = 0;
         var puntuacion = 0;
+        var bateria = 100;
         var tiempo = 0;
         var speed = 0;
         var pause = false;
         var win = false;
+        var lose = false;
+        var collect = false;
+
 
         var bot = new Image();
         var wallx = new Image();
         var wally = new Image();
         var gear = new Image();
         var charge = new Image();
+        var fondo = new Image();
 
         var tiempoInicio;
         var tiempoTotal = 0;
@@ -36,6 +41,7 @@
         var gearSound = new Audio();
         var music = new Audio();
         var victory = new Audio();
+        var defeat = new Audio();
         
         function run()
         {
@@ -47,56 +53,124 @@
             wally.src = 'img/platformY.png';
             gear.src = 'img/gear.png';
             charge.src = 'img/chargestation.png';
+            fondo.src = 'img/bg.png';
 
             gearSound.src = 'audio/recolectar.wav';
             music.src = 'audio/bgMusic.wav';
             gearSound.src = 'audio/recolectar.wav';
             victory.src = 'audio/victory.mp3';
+            defeat.src = 'audio/defeat.mp3';
 
             player1 = new Cuadro(60,75,38,40,bot);
-            gears = [new Cuadro(300,300,28,28,gear), new Cuadro(500,500,28,28,gear)];
-            paredes = [new Cuadro(0,60,25,101,wally), 
-                    new Cuadro(0,161,25,101,wally),
-                    new Cuadro(0,262,25,101,wally),
-                    new Cuadro(0,363,25,101,wally),
-                    new Cuadro(0,464,25,101,wally),
-                    new Cuadro(0,565,25,101,wally),
+            gears = [
+                new Cuadro(250,310,28,28,gear), 
+                new Cuadro(350,100,28,28,gear), 
+                new Cuadro(580,100,28,28,gear), 
+                new Cuadro(50,400,28,28,gear),
+                new Cuadro(455,515,28,28,gear),
+                new Cuadro(745,515,28,28,gear),
+                new Cuadro(745,300,28,28,gear),
+                new Cuadro(1150,300,28,28,gear),
+                ];
+            paredes = [
+                //Pared izq
+                new Cuadro(0,60,25,101,wally), 
+                new Cuadro(0,161,25,101,wally),
+                new Cuadro(0,262,25,101,wally),
+                new Cuadro(0,363,25,101,wally),
+                new Cuadro(0,464,25,101,wally),
+                //Pared der
+                new Cuadro(1310,60,25,101,wally), 
+                new Cuadro(1310,161,25,101,wally),
+                new Cuadro(1310,262,25,101,wally),
+                new Cuadro(1310,363,25,101,wally),
+                new Cuadro(1310,464,25,101,wally),
+                //Pared sup
+                new Cuadro(126,60,101,25,wallx),
+                new Cuadro(227,60,101,25,wallx),
+                new Cuadro(328,60,101,25,wallx),
+                new Cuadro(429,60,101,25,wallx),
+                new Cuadro(530,60,101,25,wallx),
+                new Cuadro(631,60,101,25,wallx),
+                new Cuadro(732,60,101,25,wallx),
+                new Cuadro(833,60,101,25,wallx),
+                new Cuadro(934,60,101,25,wallx),
+                new Cuadro(1035,60,101,25,wallx),
+                new Cuadro(1136,60,101,25,wallx),
+                new Cuadro(1237,60,101,25,wallx),
+                //Pared inf
+                new Cuadro(0,565,101,25,wallx),
+                new Cuadro(101,565,101,25,wallx),
+                new Cuadro(202,565,101,25,wallx),
+                new Cuadro(303,565,101,25,wallx),
+                new Cuadro(404,565,101,25,wallx),
+                new Cuadro(505,565,101,25,wallx),
+                new Cuadro(606,565,101,25,wallx),
+                new Cuadro(707,565,101,25,wallx),
+                new Cuadro(808,565,101,25,wallx),
+                new Cuadro(909,565,101,25,wallx),
+                new Cuadro(1010,565,101,25,wallx),
+                new Cuadro(1111,565,101,25,wallx),
 
-                    new Cuadro(1310,60,25,101,wally), 
-                    new Cuadro(1310,161,25,101,wally),
-                    new Cuadro(1310,262,25,101,wally),
-                    new Cuadro(1310,363,25,101,wally),
-                    new Cuadro(1310,464,25,101,wally),
-                    new Cuadro(1310,565,25,101,wally),
+                new Cuadro(1209,161,25,101,wally),
+                new Cuadro(1209,262,25,101,wally),
+                new Cuadro(1209,363,25,101,wally),
+                new Cuadro(1108,60,25,101,wally),
 
-                    new Cuadro(126,60,101,25,wallx),
-                    new Cuadro(227,60,101,25,wallx),
-                    new Cuadro(328,60,101,25,wallx),
-                    new Cuadro(429,60,101,25,wallx),
-                    new Cuadro(530,60,101,25,wallx),
-                    new Cuadro(631,60,101,25,wallx),
-                    new Cuadro(732,60,101,25,wallx),
-                    new Cuadro(833,60,101,25,wallx),
-                    new Cuadro(934,60,101,25,wallx),
-                    new Cuadro(1035,60,101,25,wallx),
-                    new Cuadro(1136,60,101,25,wallx),
-                    new Cuadro(1237,60,101,25,wallx),
-                
+                new Cuadro(1108,363,101,25,wallx),
+                new Cuadro(1007,262,101,25,wallx),
+                new Cuadro(906,262,101,25,wallx),
+                new Cuadro(1108,262,25,101,wally),
+                new Cuadro(906,262,25,101,wally),
+                new Cuadro(805,262,101,25,wallx),
+                new Cuadro(704,262,25,101,wally),
+                new Cuadro(805,161,25,101,wally),
+                new Cuadro(906,161,25,101,wally),
+                new Cuadro(704,161,101,25,wallx),
+                new Cuadro(1007,161,101,25,wallx),
+
+
+                new Cuadro(1108,464,25,101,wally),
+                new Cuadro(1007,464,101,25,wallx),
+                new Cuadro(1007,363,25,101,wally),
+                new Cuadro(906,464,101,25,wallx),
+                new Cuadro(805,464,101,25,wallx),
+                new Cuadro(805,363,25,101,wally),
+                new Cuadro(704,363,101,25,wallx),
+
+                new Cuadro(704,464,25,101,wally),
+                new Cuadro(603,161,101,25,wallx),
+                new Cuadro(502,363,101,25,wallx),
+                new Cuadro(603,464,101,25,wallx),
+                new Cuadro(603,262,25,101,wally),
+                new Cuadro(603,161,25,101,wally),
+
+                new Cuadro(502,60,25,101,wally),
+                new Cuadro(502,161,25,101,wally),
+                new Cuadro(401,464,101,25,wallx),
+                new Cuadro(401,262,101,25,wallx),
+                new Cuadro(401,60,25,101,wally),
+                new Cuadro(401,464,25,101,wally),
+
+                new Cuadro(300,464,25,101,wally),
+                new Cuadro(199,363,25,101,wally),
+
+                new Cuadro(98,262,25,101,wally),
+                new Cuadro(98,363,25,101,wally),
+                new Cuadro(98,161,25,101,wally),
+                new Cuadro(98,464,101,25,wallx),
+                new Cuadro(199,363,101,25,wallx),
+
+                new Cuadro(401,363,25,101,wally),
+                new Cuadro(98,262,101,25,wallx),
+                new Cuadro(199,161,101,25,wallx),
+                new Cuadro(199,161,25,101,wally),
+                new Cuadro(300,161,25,101,wally),
+                new Cuadro(300,262,101,25,wallx),
+
+            ];
                     
-                    new Cuadro(0,575,101,25,wallx),
-                    new Cuadro(101,575,101,25,wallx),
-                    new Cuadro(202,575,101,25,wallx),
-                    new Cuadro(303,575,101,25,wallx),
-                    new Cuadro(404,575,101,25,wallx),
-                    new Cuadro(505,575,101,25,wallx),
-                    new Cuadro(606,575,101,25,wallx),
-                    new Cuadro(707,575,101,25,wallx),
-                    new Cuadro(808,575,101,25,wallx),
-                    new Cuadro(909,575,101,25,wallx),
-                    new Cuadro(1010,575,101,25,wallx),
-                    new Cuadro(1111,575,101,25,wallx)];
-                    
-            station = new Cuadro(1210,525,101,72,charge);
+            station = new Cuadro(1210,515,101,72,charge);
             paint();
         }
 
@@ -130,6 +204,8 @@
             }
             if(e.keyCode == 32 && !win){
                 pause = !pause;
+                if(pause) music.pause();
+                else music.play();
             }
             if(e.keyCode == 82){
                 location.reload();
@@ -140,7 +216,7 @@
 
         function paint(currentTime){
 
-            if(!win)music.play();
+            if(!win && !pause)music.play();
 
             if(!tiempoInicio) tiempoInicio = currentTime;
 
@@ -151,7 +227,19 @@
                 tiempoTotal = (currentTime - tiempoInicio) - tiempoPausa;
             }
 
-            
+            if(!collect && !pause){
+                bateria -= 0.25;
+            }
+            collect = false;
+            if(bateria < 0 && !lose && !win) {
+                pause = true;
+                lose = true;
+                music.pause();
+                defeat.play();
+                bateria = 0;
+            }
+            if(bateria > 100) bateria = 100;
+
             tiempo = (tiempoTotal/1000).toFixed(1);
             puntuacion = (puntos-(tiempo*5)).toFixed(0);
             if(puntuacion < 0) puntuacion = 0;
@@ -165,9 +253,8 @@
             }
 
             window.requestAnimationFrame(paint);
-            ctx.fillStyle = "rgb(153, 113, 166)";
-            ctx.fillRect(0,0,1335,600);
-            
+            ctx.drawImage(fondo,0,0,1335,590);
+
            
             bounds();
 
@@ -175,8 +262,9 @@
                 ctx.font = "20px Arial";
                 ctx.fillStyle = "rgb(255,255,255)";
                 ctx.fillText("Tiempo: " + tiempo + 's', 25, 25);
-                if(puntuacion < 60) ctx.fillStyle = "rgb(255,138,138)";
                 ctx.fillText("Puntuación: " + puntuacion + " puntos", 25, 50);
+                if(bateria < 20) ctx.fillStyle = "rgb(255,138,138)";
+                ctx.fillText("Batería: " + bateria.toFixed(1) + " %", 1190, 50);
                 move();
             }
 
@@ -207,6 +295,9 @@
                     gearSound.currentTime = 0;
                     gearSound.play();
                     puntos += 50;
+                    bateria += 25;
+                    collect = true;
+                    console.log('a');
                     gears.splice(i, 1);
                 }
             }
@@ -214,11 +305,14 @@
             station.paint(ctx);
             player1.paint(ctx);
 
-            if(pause && !win){
+            if(pause && !lose && !win){
                 pausa();
             }
             if(pause && win){
                 winscreen();
+            }
+            if(pause && lose){
+                defeatscreen();
             }
         }
 
@@ -226,9 +320,9 @@
             ctx.fillStyle = "rgba(0,0,0,0.6)";
             ctx.fillRect(0,0,1350,600);
             
-            ctx.font = "20px Arial";
+            ctx.font = "50px Arial";
             ctx.fillStyle = "rgb(255,255,255)";
-            ctx.fillText("Pausa", 675, 320);
+            ctx.fillText("Pausa", 575, 320);
         }
 
         function winscreen(){
@@ -238,6 +332,20 @@
             ctx.font = "50px Arial";
             ctx.fillStyle = "rgb(255,255,255)";
             ctx.fillText("¡Has ganado!", 505, 290);
+            ctx.font = "30px Arial";
+            ctx.fillText("Tiempo: " + tiempo + 's', 570 , 335);
+            ctx.fillText("Puntuación: " + puntuacion + " puntos", 520, 370);
+            ctx.font = "15px Arial";
+            ctx.fillText("Presiona R para reiniciar", 570, 415);
+        }
+
+        function defeatscreen(){
+            ctx.fillStyle = "rgba(209,138,138,0.4)";
+            ctx.fillRect(0,0,1350,600);
+            
+            ctx.font = "50px Arial";
+            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.fillText("Te has quedado sin batería...", 365, 290);
             ctx.font = "30px Arial";
             ctx.fillText("Tiempo: " + tiempo + 's', 570 , 335);
             ctx.fillText("Puntuación: " + puntuacion + " puntos", 520, 370);
